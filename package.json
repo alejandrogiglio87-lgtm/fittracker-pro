@@ -1,0 +1,23 @@
+{
+  "name": "fittracker-pro",
+  "version": "1.0.0",
+  "description": "Aplicación web moderna para seguimiento de entrenamientos",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "dev": "python -m http.server 8000"
+  },
+  "keywords": [
+    "fitness",
+    "workout",
+    "tracker",
+    "gym",
+    "exercises"
+  ],
+  "author": "FitTracker Pro",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tu-usuario/fittracker-pro"
+  }
+}
