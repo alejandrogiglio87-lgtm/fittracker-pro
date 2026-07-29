@@ -786,6 +786,11 @@ if (!configured) {
     // App Check (opcional): protege el backend contra uso de la apiKey desde afuera.
     const siteKey = window.APPCHECK_SITE_KEY;
     if (siteKey && siteKey.trim()) {
+        // En local usamos un debug token (reCAPTCHA v3 no es confiable en localhost).
+        // El SDK imprime el token en la consola; hay que registrarlo en
+        // App Check → Apps → Manage debug tokens. En producción no se activa.
+        const isLocal = ['localhost', '127.0.0.1'].includes(location.hostname);
+        if (isLocal) self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
         try {
             initializeAppCheck(app, {
                 provider: new ReCaptchaV3Provider(siteKey.trim()),
