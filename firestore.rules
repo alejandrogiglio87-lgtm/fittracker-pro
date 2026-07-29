@@ -3,12 +3,29 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Cada usuario solo puede leer/escribir su propio documento.
+    // Documento único por usuario: users/{uid} con dos mapas: cfg y sets.
     match /users/{uid} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+
+      // El dueño puede leer lo suyo.
+      allow read: if request.auth != null && request.auth.uid == uid;
+
+      // Escritura (crear/actualizar) validada:
+      //  - solo el dueño
+      //  - solo los campos permitidos (cfg, sets), nada más
+      //  - cfg y sets deben ser mapas y con un tope de tamaño (anti-abuso)
+      allow create, update: if request.auth != null
+        && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['cfg', 'sets'])
+        && (!('cfg' in request.resource.data)
+            || (request.resource.data.cfg is map && request.resource.data.cfg.size() <= 500))
+        && (!('sets' in request.resource.data)
+            || (request.resource.data.sets is map && request.resource.data.sets.size() <= 3000));
+
+      // No permitimos borrar el documento desde el cliente.
+      allow delete: if false;
     }
 
-    // Todo lo demás queda bloqueado.
+    // Todo lo demás, bloqueado.
     match /{document=**} {
       allow read, write: if false;
     }

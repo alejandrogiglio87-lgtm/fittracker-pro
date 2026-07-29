@@ -18,3 +18,4 @@ npm-debug.log*
 
 # Claude Code (datos locales de sesión)
 .claude/
+.mcp.json

@@ -15,3 +15,9 @@ window.FIREBASE_CONFIG = {
     messagingSenderId: "1031088866912",
     appId: "1:1031088866912:web:95b092f1e9c1404acf2505"
 };
+
+// App Check (reCAPTCHA v3). Pegá acá el "site key" que te da
+// Firebase Console → App Check → Apps → registrar con reCAPTCHA v3.
+// Si lo dejás vacío, App Check queda desactivado y la app funciona igual.
+window.APPCHECK_SITE_KEY = "6LdItWotAAAAAJIYrfREIPS8W80eFziW75QYfm9_";
+

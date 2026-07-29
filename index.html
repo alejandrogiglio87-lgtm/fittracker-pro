@@ -765,6 +765,8 @@ showGate('loading');
 <!-- Firebase Auth + Firestore (SDK modular v10) -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { initializeAppCheck, ReCaptchaV3Provider }
+    from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app-check.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence }
     from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc }
@@ -780,6 +782,18 @@ if (!configured) {
     if (window.onAuthChanged) window.onAuthChanged(null);
 } else {
     const app = initializeApp(cfg);
+
+    // App Check (opcional): protege el backend contra uso de la apiKey desde afuera.
+    const siteKey = window.APPCHECK_SITE_KEY;
+    if (siteKey && siteKey.trim()) {
+        try {
+            initializeAppCheck(app, {
+                provider: new ReCaptchaV3Provider(siteKey.trim()),
+                isTokenAutoRefreshEnabled: true
+            });
+        } catch (e) { console.error('[FitTracker] App Check no se pudo iniciar:', e); }
+    }
+
     const auth = getAuth(app);
     const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
