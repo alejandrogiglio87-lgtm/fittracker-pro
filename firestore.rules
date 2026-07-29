@@ -15,11 +15,17 @@ service cloud.firestore {
       //  - cfg y sets deben ser mapas y con un tope de tamaño (anti-abuso)
       allow create, update: if request.auth != null
         && request.auth.uid == uid
-        && request.resource.data.keys().hasOnly(['cfg', 'sets'])
+        && request.resource.data.keys().hasOnly(['cfg', 'sets', 'custom', 'log', 'days'])
         && (!('cfg' in request.resource.data)
             || (request.resource.data.cfg is map && request.resource.data.cfg.size() <= 500))
         && (!('sets' in request.resource.data)
-            || (request.resource.data.sets is map && request.resource.data.sets.size() <= 3000));
+            || (request.resource.data.sets is map && request.resource.data.sets.size() <= 3000))
+        && (!('custom' in request.resource.data)
+            || (request.resource.data.custom is map && request.resource.data.custom.size() <= 200))
+        && (!('log' in request.resource.data)
+            || (request.resource.data.log is list && request.resource.data.log.size() <= 5000))
+        && (!('days' in request.resource.data)
+            || (request.resource.data.days is list && request.resource.data.days.size() <= 30));
 
       // No permitimos borrar el documento desde el cliente.
       allow delete: if false;
