@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FitTracker Pro</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>%F0%9F%92%AA</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>%F0%9F%92%AA</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <script src="exercises-data.js"></script>
     <style>
@@ -30,6 +32,31 @@
         h1{font-size:2.8em;font-weight:800;background:var(--primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px;margin-bottom:8px}
         .subtitle{color:var(--muted);font-size:1.05em}
 
+        /* AUTH GATE / LANDING */
+        .gate{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--bg);background-image:radial-gradient(at 0% 0%,rgba(102,126,234,.18) 0,transparent 50%),radial-gradient(at 100% 100%,rgba(118,75,162,.18) 0,transparent 50%)}
+        .gate.hidden{display:none}
+        .gate-card{background:var(--card);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:var(--radius-lg);padding:48px 40px;max-width:440px;width:100%;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.45);animation:slideUp .5s ease-out}
+        .gate-logo{font-size:4em;line-height:1;margin-bottom:12px;filter:drop-shadow(0 6px 14px rgba(0,0,0,.3))}
+        .gate-title{font-size:2.4em;font-weight:800;background:var(--primary);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px;margin-bottom:12px}
+        .gate-sub{color:var(--muted);font-size:1.05em;line-height:1.6;margin-bottom:30px}
+        .gate-btn{width:100%;justify-content:center;padding:15px;font-size:1.05em}
+        .gate-note{color:var(--muted);font-size:.82em;margin-top:18px}
+        .gate-spinner{width:52px;height:52px;border:4px solid rgba(255,255,255,.15);border-top-color:#667eea;border-radius:50%;animation:spin .8s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        /* loading state: show spinner, hide card. landing state: reverse */
+        .gate.loading .gate-card{display:none}
+        .gate.landing .gate-spinner{display:none}
+
+        /* AUTH BAR */
+        .auth-bar{display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-bottom:14px;min-height:40px;flex-wrap:wrap;position:relative;z-index:2}
+        .auth-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.08);color:var(--text);font-family:inherit;font-size:.9em;font-weight:600;cursor:pointer;transition:all .2s}
+        .auth-btn:hover{background:rgba(255,255,255,.16);transform:translateY(-1px)}
+        .auth-btn.google{background:#fff;color:#1f1f1f}
+        .auth-btn.google:hover{background:#f1f1f1}
+        .user-chip{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border:1px solid var(--border);padding:5px 14px 5px 5px;border-radius:999px;font-size:.9em;font-weight:600}
+        .user-chip img{width:28px;height:28px;border-radius:50%;object-fit:cover}
+        .sync-status{font-size:.78em;color:var(--muted);min-width:96px;text-align:right}
+
         /* STATS */
         .stats-panel{background:var(--card);backdrop-filter:blur(20px);padding:24px;border-radius:var(--radius-lg);border:1px solid var(--border);margin-bottom:24px}
         .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:16px}
@@ -37,6 +64,23 @@
         .stat-box:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(102,126,234,.35)}
         .stat-value{font-size:2.8em;font-weight:800;line-height:1;margin-bottom:6px}
         .stat-label{font-size:.8em;text-transform:uppercase;letter-spacing:1px;opacity:.9}
+
+        /* PROGRESS BAR */
+        .progress-wrap{height:12px;background:rgba(255,255,255,.08);border:1px solid var(--border);border-radius:999px;overflow:hidden;margin-bottom:16px}
+        .progress-bar{height:100%;width:0;background:var(--primary);border-radius:999px;transition:width .5s cubic-bezier(.4,0,.2,1);box-shadow:0 0 12px rgba(102,126,234,.5)}
+
+        /* COMPLETED EXERCISE CARD */
+        .exercise-card.done{border-color:rgba(16,185,129,.55);box-shadow:0 0 0 1px rgba(16,185,129,.35),0 14px 34px rgba(16,185,129,.18)}
+        .exercise-card.done .exercise-header::after{content:'✓';position:absolute;top:16px;right:18px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;background:var(--success);color:#fff;border-radius:50%;font-weight:800;box-shadow:0 4px 12px rgba(16,185,129,.5);z-index:2}
+
+        /* GIF PLACEHOLDER (imagen rota) */
+        .exercise-gif.no-img img{display:none}
+        .exercise-gif.no-img::after{content:'🏋️';font-size:3.4em;opacity:.35}
+
+        /* CONFETTI */
+        .confetti-layer{position:fixed;inset:0;pointer-events:none;z-index:3000;overflow:hidden}
+        .confetti{position:absolute;top:-12px;width:9px;height:9px;background:var(--c);border-radius:2px;opacity:.95;animation:confetti-fall linear forwards}
+        @keyframes confetti-fall{to{transform:translateY(106vh) translateX(calc(var(--dx)*140px)) rotate(720deg);opacity:.6}}
 
         /* DAY SELECTOR */
         .day-selector{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:24px}
@@ -78,11 +122,20 @@
         .exercise-num{display:inline-block;background:rgba(255,255,255,.25);padding:5px 12px;border-radius:20px;font-size:.82em;font-weight:600;margin-bottom:10px;backdrop-filter:blur(8px)}
         .exercise-name{font-size:1.35em;font-weight:700;line-height:1.3}
         .exercise-name-en{font-size:.82em;opacity:.88;font-weight:400;display:block;margin-top:4px}
-        .exercise-sets-info{font-size:1em;font-weight:600;margin-top:8px;opacity:.95}
-        .weight-group{margin-top:12px;padding:10px 12px;background:rgba(255,255,255,.18);border-radius:10px}
-        .weight-group label{font-size:.85em;font-weight:600;display:block;margin-bottom:6px}
-        .weight-input{width:100%;padding:10px;border:2px solid rgba(255,255,255,.4);border-radius:8px;font-size:1.05em;font-weight:700;text-align:center;background:rgba(255,255,255,.95);color:#1e293b;transition:all .2s}
-        .weight-input:focus{outline:none;border-color:white;box-shadow:0 0 0 3px rgba(255,255,255,.2);transform:scale(1.02)}
+        /* EDITABLE CONFIG (series / reps / peso) */
+        .exercise-config{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+        .cfg-item{background:rgba(255,255,255,.18);border-radius:10px;padding:9px 11px}
+        .cfg-item.full{grid-column:1 / -1}
+        .cfg-label{font-size:.72em;font-weight:700;display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;opacity:.92}
+        .stepper{display:flex;align-items:center;justify-content:space-between;gap:8px}
+        .stepper button{width:34px;height:34px;border:none;border-radius:8px;background:rgba(255,255,255,.92);color:#1e293b;font-size:1.25em;font-weight:800;cursor:pointer;transition:transform .15s,background .2s;line-height:1;display:flex;align-items:center;justify-content:center}
+        .stepper button:hover{background:#fff;transform:scale(1.1)}
+        .stepper button:active{transform:scale(.92)}
+        .series-count{font-size:1.35em;font-weight:800;min-width:26px;text-align:center}
+        .stepper .cfg-input{flex:1;min-width:0}
+        .cfg-input{width:100%;padding:9px;border:2px solid rgba(255,255,255,.4);border-radius:8px;font-size:1em;font-weight:700;text-align:center;background:rgba(255,255,255,.95);color:#1e293b;transition:all .2s}
+        .cfg-input::placeholder{color:#94a3b8;font-weight:500}
+        .cfg-input:focus{outline:none;border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.2);transform:scale(1.02)}
 
         /* GIF */
         .exercise-gif{width:100%;height:230px;background:linear-gradient(135deg,#1e293b,#334155);display:flex;align-items:center;justify-content:center;overflow:hidden}
@@ -141,18 +194,36 @@
     </style>
 </head>
 <body>
-<div class="container">
+<div id="gate" class="gate loading">
+    <div class="gate-spinner"></div>
+    <div class="gate-card">
+        <div class="gate-logo">💪</div>
+        <h1 class="gate-title">FitTracker Pro</h1>
+        <p class="gate-sub">Tu seguimiento de entrenamientos — Gym &amp; Casa, guardado en la nube.</p>
+        <button class="auth-btn google gate-btn" onclick="cloudSignIn()">
+            <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+            Iniciar sesión con Google
+        </button>
+        <p class="gate-note">Necesitás iniciar sesión para acceder a tus rutinas.</p>
+    </div>
+</div>
+
+<div class="container" id="appRoot" style="display:none">
     <header>
+        <div id="authBar" class="auth-bar"></div>
         <h1>💪 FitTracker Pro</h1>
         <p class="subtitle">Gym & Casa · Seguimiento Completo</p>
     </header>
 
     <div class="stats-panel">
         <div class="stats-grid">
-            <div class="stat-box"><div class="stat-value" id="totalSets">0</div><div class="stat-label">Series Hoy</div></div>
+            <div class="stat-box"><div class="stat-value" id="totalSets">0</div><div class="stat-label">Series ✓</div></div>
             <div class="stat-box"><div class="stat-value" id="totalExercises">0</div><div class="stat-label">Ejercicios</div></div>
             <div class="stat-box"><div class="stat-value" id="progress">0%</div><div class="stat-label">Progreso</div></div>
             <div class="stat-box"><div class="stat-value" id="calories">0</div><div class="stat-label">Calorías</div></div>
+        </div>
+        <div class="progress-wrap" title="Progreso total de la rutina">
+            <div class="progress-bar" id="progressBar"></div>
         </div>
         <button class="btn-history" onclick="showHistory()">📊 Ver Historial</button>
     </div>
@@ -206,15 +277,48 @@
 let currentDay = 'day1';
 let currentLoc = 'casa';
 
+// Escape a value before putting it inside an HTML attribute
+function escAttr(s) {
+    return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
+
 function buildCard(ex, num, day, loc) {
     const isGym = loc === 'gym';
+    const cfg = getConfig(ex, day, loc);
+    const series = cfg.series;
     const ytHref = ex.yt.startsWith('http') ? ex.yt : `https://www.youtube.com/results?search_query=${ex.yt}`;
-    const weightHTML = isGym ? `
-        <div class="weight-group">
-            <label>💪 Peso:</label>
-            <input class="weight-input" type="text" value="${ex.peso}" onchange="saveWeight('${ex.id}','${day}',this.value)">
-        </div>` : '';
-    const sets = Array.from({length: ex.series}, (_, i) => `
+    const configHTML = `
+        <div class="exercise-config">
+            <div class="cfg-item">
+                <span class="cfg-label">🔢 Series</span>
+                <div class="stepper">
+                    <button type="button" aria-label="Quitar una serie" onclick="changeSeries('${ex.id}','${day}','${loc}',-1)">−</button>
+                    <span class="series-count">${series}</span>
+                    <button type="button" aria-label="Agregar una serie" onclick="changeSeries('${ex.id}','${day}','${loc}',1)">+</button>
+                </div>
+            </div>
+            <div class="cfg-item">
+                <span class="cfg-label">🔁 Reps</span>
+                <div class="stepper">
+                    <button type="button" aria-label="Bajar repeticiones" onclick="stepField('${ex.id}','${day}','${loc}','reps',-1)">−</button>
+                    <input class="cfg-input" id="cfg-reps-${loc}-${ex.id}" type="text" aria-label="Repeticiones" value="${escAttr(cfg.reps)}" onchange="saveField('${ex.id}','${day}','${loc}','reps',this.value)">
+                    <button type="button" aria-label="Subir repeticiones" onclick="stepField('${ex.id}','${day}','${loc}','reps',1)">+</button>
+                </div>
+            </div>
+            <div class="cfg-item full">
+                <span class="cfg-label">🏋️ Peso / Lingotes</span>
+                <div class="stepper">
+                    <button type="button" aria-label="Bajar peso" onclick="stepField('${ex.id}','${day}','${loc}','peso',-1)">−</button>
+                    <input class="cfg-input" id="cfg-peso-${loc}-${ex.id}" type="text" aria-label="Peso o lingotes" value="${escAttr(cfg.peso)}" placeholder="Ej: 10 kg · 5 lingotes" onchange="saveField('${ex.id}','${day}','${loc}','peso',this.value)">
+                    <button type="button" aria-label="Subir peso" onclick="stepField('${ex.id}','${day}','${loc}','peso',1)">+</button>
+                </div>
+            </div>
+        </div>`;
+    const sets = Array.from({length: series}, (_, i) => `
         <label class="set-checkbox" id="lbl-${ex.id}-${i+1}">
             <input type="checkbox" data-ex="${ex.id}" data-set="${i+1}" data-day="${day}" data-loc="${loc}" onchange="onCheck(this)">
             <span>Serie ${i+1}</span>
@@ -225,11 +329,10 @@ function buildCard(ex, num, day, loc) {
         <div class="exercise-header ${isGym?'gym-header':'casa-header'}">
             <div class="exercise-num">${isGym?'🏢':'🏠'} Ejercicio ${num}</div>
             <div class="exercise-name">${ex.nombre}<span class="exercise-name-en">${ex.nombre_en}</span></div>
-            <div class="exercise-sets-info">${ex.series} series × ${ex.reps} reps</div>
-            ${weightHTML}
+            ${configHTML}
         </div>
         <div class="exercise-gif">
-            <img src="workout/${ex.img}" alt="${ex.nombre}" onerror="this.style.display='none'">
+            <img src="workout/${escAttr(ex.img)}" alt="${escAttr(ex.nombre)}" loading="lazy" onerror="this.closest('.exercise-gif').classList.add('no-img')">
         </div>
         <div class="exercise-body">
             <div class="exercise-desc">${ex.desc}</div>
@@ -300,6 +403,38 @@ function onCheck(cb) {
         timeEl.textContent = '';
     }
     updateStats();
+    scheduleSync();
+    // Celebrate when an exercise (or the whole day) is completed
+    if (cb.checked) {
+        const card = cb.closest('.exercise-card');
+        if (card && card.classList.contains('done')) {
+            const dayC = document.getElementById(`${day}-${loc}`);
+            const cards = dayC ? dayC.querySelectorAll('.exercise-card') : [];
+            const allDone = cards.length && Array.from(cards).every(c => c.classList.contains('done'));
+            celebrate(allDone ? 80 : 26);
+        }
+    }
+}
+
+// Lightweight confetti burst (no libraries). Respects reduced-motion.
+function celebrate(amount) {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    amount = amount || 26;
+    const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe', '#10b981', '#f59e0b'];
+    const layer = document.createElement('div');
+    layer.className = 'confetti-layer';
+    for (let i = 0; i < amount; i++) {
+        const p = document.createElement('span');
+        p.className = 'confetti';
+        p.style.setProperty('--c', colors[i % colors.length]);
+        p.style.left = (Math.random() * 100) + '%';
+        p.style.setProperty('--dx', (Math.random() * 2 - 1).toFixed(2));
+        p.style.animationDelay = (Math.random() * 0.25).toFixed(2) + 's';
+        p.style.animationDuration = (0.9 + Math.random() * 0.7).toFixed(2) + 's';
+        layer.appendChild(p);
+    }
+    document.body.appendChild(layer);
+    setTimeout(() => layer.remove(), 2400);
 }
 
 function loadState(day, loc) {
@@ -319,37 +454,111 @@ function loadState(day, loc) {
             }
         }
     });
-    // Load saved weights
-    const data = exercisesData[loc][day] || [];
-    data.forEach(ex => {
-        const w = localStorage.getItem(`ft-weight-${day}-${loc}-${ex.id}`);
-        if (w) {
-            const input = container.querySelector(`input.weight-input[onchange*="${ex.id}"]`);
-            if (input) input.value = w;
+}
+
+// --- Per-exercise editable config (series / reps / peso) ---
+function findEx(day, loc, id) {
+    return (exercisesData[loc][day] || []).find(e => e.id === id);
+}
+
+function cfgKey(day, loc, id) {
+    return `ft-cfg-${day}-${loc}-${id}`;
+}
+
+function getConfig(ex, day, loc) {
+    const def = {
+        series: ex.series,
+        reps: ex.reps != null ? String(ex.reps) : '',
+        peso: ex.peso != null ? String(ex.peso) : ''
+    };
+    try {
+        const raw = JSON.parse(localStorage.getItem(cfgKey(day, loc, ex.id)));
+        if (raw && typeof raw === 'object') {
+            return {
+                series: Number.isFinite(raw.series) ? raw.series : def.series,
+                reps: raw.reps != null ? raw.reps : def.reps,
+                peso: raw.peso != null ? raw.peso : def.peso
+            };
         }
-    });
+    } catch (e) {}
+    return def;
 }
 
-function saveWeight(id, day, val) {
-    localStorage.setItem(`ft-weight-${day}-${currentLoc}-${id}`, val);
+function saveConfig(day, loc, id, patch) {
+    const ex = findEx(day, loc, id);
+    if (!ex) return;
+    const next = { ...getConfig(ex, day, loc), ...patch };
+    localStorage.setItem(cfgKey(day, loc, id), JSON.stringify(next));
+    scheduleSync();
+    return next;
 }
 
+function saveField(id, day, loc, field, val) {
+    saveConfig(day, loc, id, { [field]: val });
+}
+
+// +/- for text fields that start with a number, preserving the unit suffix
+function stepField(id, day, loc, field, delta) {
+    const ex = findEx(day, loc, id);
+    if (!ex) return;
+    const input = document.getElementById(`cfg-${field}-${loc}-${id}`);
+    const cur = input ? String(input.value) : String(getConfig(ex, day, loc)[field] ?? '');
+    const m = cur.match(/^\s*(-?\d+(?:[.,]\d+)?)(.*)$/);
+    let num, suffix;
+    if (m) {
+        num = parseFloat(m[1].replace(',', '.'));
+        suffix = m[2];
+    } else {
+        num = 0;
+        suffix = cur.trim() ? ' ' + cur.trim() : '';
+    }
+    const min = field === 'reps' ? 1 : 0;
+    num = Math.max(min, num + delta);
+    const numStr = Number.isInteger(num) ? String(num) : String(Math.round(num * 100) / 100);
+    const val = (numStr + suffix).trim();
+    saveConfig(day, loc, id, { [field]: val });
+    if (input) input.value = val;
+}
+
+function changeSeries(id, day, loc, delta) {
+    const ex = findEx(day, loc, id);
+    if (!ex) return;
+    const cur = getConfig(ex, day, loc).series;
+    const next = Math.max(1, Math.min(12, cur + delta));
+    if (next === cur) return;
+    // Clean up completion state for removed sets
+    if (next < cur) {
+        for (let s = next + 1; s <= cur; s++) {
+            localStorage.removeItem(`ft-${day}-${loc}-${id}-${s}`);
+        }
+    }
+    saveConfig(day, loc, id, { series: next });
+    renderDay(day, loc);
+    updateStats();
+}
+
+// Stats reflect the WHOLE routine: all 4 days × casa & gym (every card is in the DOM)
 function updateStats() {
-    const container = document.getElementById(`${currentDay}-${currentLoc}`);
-    if (!container) return;
-    const allCbs = container.querySelectorAll('input[type=checkbox]');
-    const checked = Array.from(allCbs).filter(c => c.checked);
+    const root = document.getElementById('appRoot');
+    if (!root) return;
+    const allCbs = root.querySelectorAll('.set-checkbox input[type=checkbox]');
+    const checkedCount = Array.from(allCbs).filter(c => c.checked).length;
     const total = allCbs.length;
-    const pct = total ? Math.round(checked.length/total*100) : 0;
-    document.getElementById('totalSets').textContent = checked.length;
+    const pct = total ? Math.round(checkedCount / total * 100) : 0;
+
+    document.getElementById('totalSets').textContent = checkedCount;
     document.getElementById('progress').textContent = pct + '%';
+    const bar = document.getElementById('progressBar');
+    if (bar) bar.style.width = pct + '%';
 
     let cal = 0, exDone = 0;
-    container.querySelectorAll('.exercise-card').forEach(card => {
+    root.querySelectorAll('.exercise-card').forEach(card => {
         const cardCbs = card.querySelectorAll('input[type=checkbox]');
-        const cardChecked = Array.from(cardCbs).filter(c => c.checked);
-        cal += (parseInt(card.dataset.cal)||0) * cardChecked.length;
-        if (cardCbs.length && cardChecked.length === cardCbs.length) exDone++;
+        const cardChecked = Array.from(cardCbs).filter(c => c.checked).length;
+        cal += (parseInt(card.dataset.cal) || 0) * cardChecked;
+        const done = cardCbs.length > 0 && cardChecked === cardCbs.length;
+        if (done) exDone++;
+        card.classList.toggle('done', done);
     });
     document.getElementById('calories').textContent = cal;
     document.getElementById('totalExercises').textContent = exDone;
@@ -371,6 +580,7 @@ function resetDay(day) {
         });
     });
     updateStats();
+    scheduleSync();
 }
 
 function showHistory() {
@@ -383,7 +593,8 @@ function showHistory() {
             const data = exercisesData[loc][day] || [];
             const entries = [];
             data.forEach(ex => {
-                for (let s=1; s<=ex.series; s++) {
+                const series = getConfig(ex, day, loc).series;
+                for (let s=1; s<=series; s++) {
                     const v = localStorage.getItem(`ft-${day}-${loc}-${ex.id}-${s}`);
                     if (v) entries.push({name: ex.nombre, set: s, time: new Date(v)});
                 }
@@ -408,10 +619,185 @@ function closeHistory() {
 
 window.onclick = e => { if (e.target === document.getElementById('historyModal')) closeHistory(); };
 
-// INIT
+// ==================== CLOUD SYNC (Firebase) ====================
+let cloudUid = null;
+let syncTimer = null;
+
+// Gather all FitTracker localStorage into two maps for Firestore
+function collectState() {
+    const cfg = {}, sets = {};
+    for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k.startsWith('ft-cfg-')) {
+            try { cfg[k] = JSON.parse(localStorage.getItem(k)); } catch (e) {}
+        } else if (k.startsWith('ft-day')) {
+            sets[k] = localStorage.getItem(k);
+        }
+    }
+    return { cfg, sets };
+}
+
+function clearLocalFt() {
+    const del = [];
+    for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k.startsWith('ft-')) del.push(k);
+    }
+    del.forEach(k => localStorage.removeItem(k));
+}
+
+function setSync(text) {
+    const s = document.getElementById('syncStatus');
+    if (s) s.textContent = text;
+}
+
+// Debounced push of full state to the cloud (no-op when logged out)
+function scheduleSync() {
+    if (!cloudUid) return;
+    setSync('Guardando…');
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(() => {
+        window.cloudSaveDoc(cloudUid, collectState())
+            .then(() => setSync('✓ Guardado'))
+            .catch(err => { console.error(err); setSync('⚠ Error al guardar'); });
+    }, 800);
+}
+
+// Show the landing/gate in a given mode: 'loading' | 'landing'
+function showGate(mode) {
+    const g = document.getElementById('gate');
+    if (g) {
+        g.classList.remove('hidden');
+        g.classList.toggle('loading', mode === 'loading');
+        g.classList.toggle('landing', mode === 'landing');
+    }
+    const app = document.getElementById('appRoot');
+    if (app) app.style.display = 'none';
+}
+
+function showApp() {
+    const g = document.getElementById('gate');
+    if (g) g.classList.add('hidden');
+    const app = document.getElementById('appRoot');
+    if (app) app.style.display = 'block';
+}
+
+// Called by the Firebase module on auth state change
+window.onAuthChanged = async (user) => {
+    cloudUid = user ? user.uid : null;
+    if (user) {
+        updateAuthUI(user);
+        showApp();
+        await pullState();
+    } else {
+        // Logged out: wipe local cache so no data leaks to the next user on this device
+        clearLocalFt();
+        renderAll();
+        selectLocation(currentLoc);
+        updateStats();
+        showGate('landing');
+    }
+};
+
+async function pullState() {
+    setSync('Sincronizando…');
+    let data = null;
+    try {
+        data = await window.cloudLoadDoc(cloudUid);
+    } catch (err) {
+        console.error(err);
+        setSync('⚠ Error al sincronizar');
+        return;
+    }
+    const local = collectState();
+    const cloudEmpty = !data ||
+        ((!data.cfg || !Object.keys(data.cfg).length) && (!data.sets || !Object.keys(data.sets).length));
+    const localHas = Object.keys(local.cfg).length || Object.keys(local.sets).length;
+
+    if (cloudEmpty && localHas) {
+        // First login on a device that already had local data → seed the cloud
+        try { await window.cloudSaveDoc(cloudUid, local); } catch (err) { console.error(err); }
+    } else if (data) {
+        // Cloud is the source of truth → replace local
+        clearLocalFt();
+        Object.entries(data.cfg || {}).forEach(([k, v]) =>
+            localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v)));
+        Object.entries(data.sets || {}).forEach(([k, v]) =>
+            localStorage.setItem(k, v));
+    }
+    renderAll();
+    selectLocation(currentLoc);
+    updateStats();
+    setSync('✓ Sincronizado');
+}
+
+function updateAuthUI(user) {
+    const el = document.getElementById('authBar');
+    if (!el) return;
+    if (user) {
+        const name = user.displayName || user.email || 'Usuario';
+        const photo = user.photoURL
+            ? `<img src="${user.photoURL}" alt="" referrerpolicy="no-referrer">` : '';
+        el.innerHTML =
+            `<span id="syncStatus" class="sync-status"></span>
+             <div class="user-chip">${photo}<span>${name}</span></div>
+             <button class="auth-btn" onclick="cloudSignOut()">Salir</button>`;
+    } else {
+        el.innerHTML =
+            `<button class="auth-btn google" onclick="cloudSignIn()">
+                <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+                Iniciar sesión con Google
+            </button>`;
+    }
+}
+
+// INIT — build the app (hidden) and show the loading gate until Firebase
+// resolves the session. onAuthChanged then reveals the app or the landing.
 renderAll();
 selectLocation('casa');
 updateStats();
+showGate('loading');
+</script>
+
+<!-- Firebase config (editá firebase-config.js con tus valores) -->
+<script src="firebase-config.js"></script>
+
+<!-- Firebase Auth + Firestore (SDK modular v10) -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence }
+    from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc }
+    from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+const cfg = window.FIREBASE_CONFIG || {};
+const configured = cfg.apiKey && !cfg.apiKey.startsWith('TU_');
+
+if (!configured) {
+    console.warn('[FitTracker] Firebase todavía no está configurado. Editá firebase-config.js.');
+    window.cloudSignIn = () => alert('Firebase todavía no está configurado.\nPegá tu firebaseConfig en firebase-config.js y recargá.');
+    window.cloudSignOut = () => {};
+    if (window.onAuthChanged) window.onAuthChanged(null);
+} else {
+    const app = initializeApp(cfg);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+    setPersistence(auth, browserLocalPersistence).catch(e => console.error(e));
+
+    window.cloudSignIn = () => signInWithPopup(auth, provider)
+        .catch(e => { console.error(e); alert('No se pudo iniciar sesión: ' + e.message); });
+    window.cloudSignOut = () => signOut(auth);
+    window.cloudLoadDoc = async (uid) => {
+        const snap = await getDoc(doc(db, 'users', uid));
+        return snap.exists() ? snap.data() : null;
+    };
+    window.cloudSaveDoc = (uid, data) => setDoc(doc(db, 'users', uid), data);
+
+    onAuthStateChanged(auth, (user) => {
+        if (window.onAuthChanged) window.onAuthChanged(user);
+    });
+}
 </script>
 </body>
 </html>
